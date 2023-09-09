@@ -20,8 +20,16 @@ const auth = (req, res, next) => {
 
 router.post('/add', auth, async (req, res) => {
     try {
-        const { title, ingredients, category } = req.body;
-        const newRecipe = new Recipe({ title, ingredients, category, author: req.user.userId });
+        const { title, description, ingredients, instructions, category } = req.body;
+        
+        const newRecipe = new Recipe({
+            title,
+            description,
+            ingredients,
+            instructions,
+            category,
+            author: req.user.userId
+        });
 
         const savedRecipe = await newRecipe.save();
 
@@ -29,9 +37,13 @@ router.post('/add', auth, async (req, res) => {
 
         res.status(201).json(savedRecipe);
     } catch (err) {
-        // res.status(500).send('Server error');
-        console.error(err); // This will print the full error object in the server console
-        res.status(500).send(err.message);
+        console.error(err); 
+
+        if (err.name === 'ValidationError') {
+            return res.status(400).send(err.message);
+        }
+
+        res.status(500).send('Server error');
     }
 });
 
