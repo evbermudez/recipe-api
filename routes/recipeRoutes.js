@@ -29,7 +29,9 @@ router.post('/add', auth, async (req, res) => {
 
         res.status(201).json(savedRecipe);
     } catch (err) {
-        res.status(500).send('Server error');
+        // res.status(500).send('Server error');
+        console.error(err); // This will print the full error object in the server console
+        res.status(500).send(err.message);
     }
 });
 
